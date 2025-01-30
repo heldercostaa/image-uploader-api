@@ -1,8 +1,8 @@
 {
-  "name": "image-upload",
+  "name": "image-uploader",
   "version": "1.0.0",
   "type": "module",
-  "description": "Application for image uploads.",
+  "description": "Application to upload images.",
   "author": "Helder Costa",
   "engines": {
     "node": ">=22.13.1"
