@@ -34,6 +34,12 @@ export const uploadImageController: FastifyPluginAsyncZod = async (server: Fasti
         contentStream: uploadedFile.file,
       });
 
+      if (uploadedFile.file.truncated) {
+        return reply.status(400).send({
+          message: 'File is too large',
+        });
+      }
+
       if (isRight(result)) {
         const { url } = unwrapEither(result);
         return reply.status(201).send({ url });
