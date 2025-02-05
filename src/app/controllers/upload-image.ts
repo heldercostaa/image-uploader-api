@@ -4,9 +4,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { uploadImageService } from '../services/upload-image';
 
-export const uploadImageController: FastifyPluginAsyncZod = async (
-  server: FastifyInstance
-) => {
+export const uploadImageController: FastifyPluginAsyncZod = async (server: FastifyInstance) => {
   server.post(
     '/uploads',
     {
@@ -14,7 +12,7 @@ export const uploadImageController: FastifyPluginAsyncZod = async (
         summary: 'Upload an image',
         consumes: ['multipart/form-data'],
         response: {
-          201: z.null().describe('Image uploaded successfully.'),
+          201: z.object({ url: z.string() }).describe('Image uploaded successfully.'),
           400: z.object({ message: z.string() }),
         },
       },
@@ -37,7 +35,8 @@ export const uploadImageController: FastifyPluginAsyncZod = async (
       });
 
       if (isRight(result)) {
-        return reply.status(201).send();
+        const { url } = unwrapEither(result);
+        return reply.status(201).send({ url });
       }
 
       const error = unwrapEither(result);
