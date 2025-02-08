@@ -19,7 +19,7 @@ export async function uploadFile(params: UploadFileParams) {
   const { folder, fileName, contentType, contentStream } = uploadFileParams.parse(params);
 
   const fileExtension = extname(fileName);
-  const fileBasename = basename(fileName);
+  const fileBasename = basename(fileName, extname(fileName));
   const sanitizedFileName = fileBasename.replace(/[^a-zA-Z0-9]/g, '');
   const sanitizedFileNameWithExtension = sanitizedFileName.concat(fileExtension);
 
