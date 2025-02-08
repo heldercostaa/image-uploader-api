@@ -9,6 +9,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod';
+import { exportUploadsController } from './app/controllers/export-uploads';
 import { getUploadsController } from './app/controllers/get-uploads';
 import { uploadImageController } from './app/controllers/upload-image';
 import { transformSwaggerSchema } from './transform-swagger-schema';
@@ -51,6 +52,7 @@ server.register(fastifySwaggerUi, {
 
 server.register(uploadImageController);
 server.register(getUploadsController);
+server.register(exportUploadsController);
 
 server.listen({ port: env.PORT, host: '0.0.0.0' }).then(() => {
   console.log('🚀 Server running!');

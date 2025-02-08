@@ -1,5 +1,4 @@
 import { isRight, unwrapEither } from '@/shared/either';
-import type { FastifyInstance } from 'fastify';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { uploadImageService } from '../services/upload-image';
