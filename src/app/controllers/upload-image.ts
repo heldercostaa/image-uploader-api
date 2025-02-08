@@ -4,12 +4,13 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { uploadImageService } from '../services/upload-image';
 
-export const uploadImageController: FastifyPluginAsyncZod = async (server: FastifyInstance) => {
+export const uploadImageController: FastifyPluginAsyncZod = async (server) => {
   server.post(
     '/uploads',
     {
       schema: {
         summary: 'Upload an image',
+        tags: ['uploads'],
         consumes: ['multipart/form-data'],
         response: {
           201: z.object({ url: z.string() }).describe('Image uploaded successfully.'),
