@@ -3,6 +3,8 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { uploadImageService } from '../services/upload-image';
 
+const MAXIMUM_FILE_SIZE_IN_BYTES = 1024 * 1024 * 4
+
 export const uploadImageController: FastifyPluginAsyncZod = async (server) => {
   server.post(
     '/uploads',
@@ -19,7 +21,7 @@ export const uploadImageController: FastifyPluginAsyncZod = async (server) => {
     },
     async (request, reply) => {
       const uploadedFile = await request.file({
-        limits: { fileSize: 1024 * 1024 * 2 }, // 2MB
+        limits: { fileSize: MAXIMUM_FILE_SIZE_IN_BYTES }, // 4MB
       });
 
       if (!uploadedFile) {
