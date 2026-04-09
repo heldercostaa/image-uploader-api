@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - main
-    types: [opened, reopened, labeled, unlabeled, synchronize]
+    types: [opened, reopened]
 
 jobs:
   test:
@@ -32,32 +32,35 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v5
         with:
           version: 10
           run_install: false
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: "pnpm"
 
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run test
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-  build:
-    name: Build the API
+      - name: Run tests
+        run: pnpm run test
+
+  build-and-push:
+    name: Build and Push Image
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -70,27 +73,35 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
       - name: Generate tag
         id: generate-tag
         run: |
           SHA=$(echo $GITHUB_SHA | head -c7)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
 
-      # - name: Build and push
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-      #     IMAGE_TAG: ${{ steps.generate-tag.outputs.sha }}
-      #   run: |
-      #     docker build --platform linux/amd64 --provenance=false \
-      #       -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Build and push
+      - name: Build image (for scan)
         uses: docker/build-push-action@v7
         with:
             context: .
-            push: true
+            load: true
+            cache-from: type=gha
+            cache-to: type=gha,mode=max
             tags: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ steps.generate-tag.outputs.sha }}
             platforms: linux/amd64
             provenance: false
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ steps.generate-tag.outputs.sha }}
+          format: 'table'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+
+      - name: Push image
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ steps.generate-tag.outputs.sha }}

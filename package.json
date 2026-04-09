@@ -5,7 +5,7 @@
   "description": "API that upload images.",
   "author": "Helder Costa",
   "engines": {
-    "node": ">=22.13.1"
+    "node": ">=24"
   },
   "scripts": {
     "build": "tsup-node",
