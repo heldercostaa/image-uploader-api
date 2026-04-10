@@ -1,0 +1,70 @@
+name: image-uploader-api-deploy
+
+services:
+  postgres:
+    container_name: postgres-deploy
+    image: postgres:18.3
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: "image_uploader"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - pg-data-deploy:/var/lib/postgresql
+      - ./docker:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d image_uploader"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - image-uploader-deploy
+
+  migrate:
+    build:
+      context: .
+      target: dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /usr/src/app
+    env_file:
+      - .env
+    environment:
+      DB_URL: "postgresql://postgres:postgres@postgres:5432/image_uploader"
+    command: pnpm run db:migrate
+    volumes:
+      - .:/usr/src/app
+      - app-node-modules-deploy:/usr/src/app/node_modules
+      - pnpm-store-deploy:/pnpm/store
+    networks:
+      - image-uploader-deploy
+
+  app:
+    build:
+      context: .
+    container_name: api-deploy
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: "production"
+      DB_URL: "postgresql://postgres:postgres@postgres:5432/image_uploader"
+    ports:
+      - 3333:3333
+    networks:
+      - image-uploader-deploy
+
+volumes:
+  app-node-modules-deploy: {}
+  pg-data-deploy: {}
+  pnpm-store-deploy: {}
+
+networks:
+  image-uploader-deploy:
+    driver: bridge

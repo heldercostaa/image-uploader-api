@@ -1,10 +1,33 @@
-name: image-uploader
+name: image-uploader-api
 
 services:
+  app:
+    build:
+      context: .
+      target: dev
+    container_name: api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /usr/src/app
+    ports:
+      - 3333:3333
+    env_file:
+      - .env
+    environment:
+      CI: "true"
+      DB_URL: "postgresql://postgres:postgres@postgres:5432/image_uploader"
+    command: sh -c "pnpm install --frozen-lockfile --store-dir /pnpm/store --config.confirmModulesPurge=false && pnpm run db:migrate && pnpm run dev"
+    volumes:
+      - .:/usr/src/app
+      - app-node-modules:/usr/src/app/node_modules
+      - pnpm-store:/pnpm/store
+    networks:
+      - image-uploader
+
   postgres:
     container_name: postgres
-    image: postgres:16.3-alpine
-    restart: always
+    image: postgres:18.3
     ports:
       - 5432:5432
     environment:
@@ -12,18 +35,21 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     volumes:
-      # - pg_data:/var/lib/postgresql/data
+      - pg-data:/var/lib/postgresql
       - ./docker:/docker-entrypoint-initdb.d
-    # networks:
-    #   - image-uploader
-    # healthcheck:
-    #   test: ["CMD-SHELL", "pg_isready -U postgres -d image_uploader"]
-    #   interval: 10s
-    #   timeout: 5s
-# volumes:
-#   pg_data: {}
-#   nodemodules: {}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d image_uploader"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - image-uploader
 
-# networks:
-#   planner:
-#     driver: bridge
+volumes:
+  app-node-modules: {}
+  pg-data: {}
+  pnpm-store: {}
+
+networks:
+  image-uploader:
+    driver: bridge

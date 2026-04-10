@@ -10,6 +10,14 @@ FROM base AS dependencies
 
   RUN pnpm install
 
+FROM base AS dev
+
+  WORKDIR /usr/src/app
+
+  COPY package.json pnpm-lock.yaml ./
+
+  RUN pnpm install
+
 FROM base AS build
 
   WORKDIR /usr/src/app
