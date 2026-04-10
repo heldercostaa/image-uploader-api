@@ -3,7 +3,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { uploadImageService } from '../services/upload-image';
 
-const MAXIMUM_FILE_SIZE_IN_BYTES = 1024 * 1024 * 4
+const MAXIMUM_FILE_SIZE_IN_BYTES = 1024 * 1024 * 4;
 
 export const uploadImageController: FastifyPluginAsyncZod = async (server) => {
   server.post(

@@ -44,6 +44,9 @@
       <a href="#local-setup-instructions">Local Setup Instructions</a>
     </li>
     <li>
+      <a href="#production-image-check">Production Image Check</a>
+    </li>
+    <li>
       <a href="#api-reference">API Reference</a>
     </li>
     <li>
@@ -100,32 +103,17 @@ If you are also running the frontend widget, this API is the service responsible
    pnpm install
    ```
 
-2. **Environment Variables**: Create `.env` and `.env.test` files to store your environment variables. You can copy the example file and then edit it:
+2. **Environment Variables**: Create a `.env` file to store your environment variables. You can copy the example file and then edit it:
 
    ```bash
    cp .env.example .env
-   cp .env.test.example .env.test
-   ```
-
-   Required environment variables:
-
-   ```env
-   NODE_ENV="development"
-   PORT="3333"
-   DB_URL="postgresql://postgres:postgres@localhost:5432/image_uploader"
-   CLOUDFLARE_ACCOUNT_ID=""
-   CLOUDFLARE_ACCESS_KEY_ID=""
-   CLOUDFLARE_SECRET_ACCESS_KEY=""
-   CLOUDFLARE_BUCKET=""
-   CLOUDFLARE_PUBLIC_URL=""
    ```
 
   > [!IMPORTANT]
-  > - Use `localhost` in `DB_URL` when running the API from your machine.
-  > - Use `postgres` in `DB_URL` when running the API from Docker networking.
   > - The API needs valid Cloudflare R2 credentials to upload files and export reports.
+  > - Keep `DB_URL` in `.env` pointing to `localhost` for local Node commands like `pnpm run dev` and `pnpm run test`.
 
-3. **Start PostgreSQL with Docker Compose**: Spin up a local PostgreSQL instance using Docker.
+3. **Start the development stack with Docker Compose**: Spin up PostgreSQL and the API with hot reload.
 
    ```bash
    docker compose up -d
@@ -136,30 +124,51 @@ If you are also running the frontend widget, this API is the service responsible
   </div>
 
   > [!Note]
-  > This project includes a PostgreSQL container configured for the `image_uploader` and `image_uploader_test` databases.
+  > This project includes a PostgreSQL container configured for the `image_uploader` and `image_uploader_test` databases, and the app container runs migrations automatically before starting.
 
-4. **Run database migrations**: Apply all database schema migrations.
-
-   ```bash
-   pnpm db:migrate
-   ```
-
-5. **Start the development server**: Launch the API in development mode with hot-reloading enabled.
+4. **Start the development server locally (optional)**: If you want to run the API directly on your machine instead, keep Docker Compose running for PostgreSQL and use:
 
    ```bash
-   pnpm dev
+   pnpm run dev
    ```
 
   <div align="center">
     <img src="./docs/4. Terminal.png" alt="Docker compose" style="width: 60%; border-radius: 5px;"/>
   </div>
 
-6. **Open the API docs**: Access the interactive API documentation (Swagger) in your browser to explore available endpoints.
+5. **Open the API docs**: Access the interactive API documentation (Swagger) in your browser to explore available endpoints.
 
    ```text
    http://localhost:3333/docs
 
-7. **Frontend Interface (Optional)**: If you want to experience the application with a frontend, follow the [Application Local Setup Instructions](https://github.com/heldercostaa/image-uploader#local-setup-instructions) to have it running. This step is optional as the API can be entirely called by endpoints.
+6. **Frontend Interface (Optional)**: If you want to experience the application with a frontend, follow the [Application Local Setup Instructions](https://github.com/heldercostaa/image-uploader#local-setup-instructions) to have it running. This step is optional as the API can be entirely called by endpoints.
+
+## Production Image Check
+
+To validate the production `Dockerfile` path end-to-end, use the dedicated deploy compose file:
+
+```bash
+docker compose up -f docker-compose.deploy.yml -d --build
+```
+
+This flow:
+
+- starts PostgreSQL
+- runs Drizzle migrations in a one-shot container
+- builds the final distroless app image from `Dockerfile`
+- starts the production container on `http://localhost:3333`
+
+To run it in detached mode:
+
+```bash
+docker compose -f docker-compose.deploy.yml up -d --build
+```
+
+To stop and remove its containers and volumes:
+
+```bash
+docker compose -f docker-compose.deploy.yml down -v
+```
 
 ## API Reference
 
