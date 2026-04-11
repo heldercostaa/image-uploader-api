@@ -9,7 +9,7 @@ export const getUploadsController: FastifyPluginAsyncZod = async (server) => {
     {
       schema: {
         summary: 'Get uploads',
-        tags: ['uploads'],
+        tags: ['Uploads'],
         querystring: z.object({
           searchQuery: z.string().optional(),
           sortBy: z.enum(['createdAt']).optional(),

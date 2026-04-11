@@ -9,7 +9,7 @@ export const exportUploadsController: FastifyPluginAsyncZod = async (server) => 
     {
       schema: {
         summary: 'Export uploads',
-        tags: ['uploads'],
+        tags: ['Uploads'],
         querystring: z.object({
           searchQuery: z.string().optional(),
         }),

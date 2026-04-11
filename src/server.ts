@@ -11,6 +11,7 @@ import {
 } from 'fastify-type-provider-zod';
 import { exportUploadsController } from './app/controllers/export-uploads';
 import { getUploadsController } from './app/controllers/get-uploads';
+import { healthCheckController } from './app/controllers/health-check';
 import { uploadImageController } from './app/controllers/upload-image';
 import { transformSwaggerSchema } from './transform-swagger-schema';
 
@@ -50,6 +51,7 @@ server.register(fastifySwaggerUi, {
   routePrefix: '/docs',
 });
 
+server.register(healthCheckController);
 server.register(uploadImageController);
 server.register(getUploadsController);
 server.register(exportUploadsController);
