@@ -23,7 +23,7 @@ function isDegraded(memoryUsagePercent: number): boolean {
 
 export const healthCheckController: FastifyPluginAsyncZod = async (server) => {
   server.get(
-    '/health',
+    '/health-check',
     {
       schema: {
         tags: ['Health Check'],

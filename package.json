@@ -1,5 +1,5 @@
 {
-  "name": "image-uploader",
+  "name": "image-uploader-api",
   "version": "1.0.0",
   "type": "module",
   "description": "API that upload images.",
