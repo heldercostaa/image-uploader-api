@@ -55,7 +55,7 @@ export const healthCheckController: FastifyPluginAsyncZod = async (server) => {
       const memory = getMemoryUsage();
 
       const body = {
-        status: isDegraded(memory.usagePercent) ? 'degraded' : 'ok',
+        status: isDegraded(memory.usagePercent) ? 'degraded!' : 'ok!',
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         version: process.env.npm_package_version ?? 'unknown',
