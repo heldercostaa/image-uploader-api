@@ -6,14 +6,19 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3333),
 
   // Database
-  DB_URL: z.string().url().startsWith('postgresql://'),
+  DB_URL: z.url().startsWith('postgresql://'),
 
   // Cloudflare
   CLOUDFLARE_ACCOUNT_ID: z.string(),
   CLOUDFLARE_ACCESS_KEY_ID: z.string(),
   CLOUDFLARE_SECRET_ACCESS_KEY: z.string(),
   CLOUDFLARE_BUCKET: z.string(),
-  CLOUDFLARE_PUBLIC_URL: z.string().url(),
+  CLOUDFLARE_PUBLIC_URL: z.url(),
+
+  // Logger
+  LOG_LEVEL: z
+      .enum(["silent", "trace", "debug", "info", "warn", "error", "fatal"])
+      .default("info"),
 });
 
 const _env = envSchema.safeParse(process.env);

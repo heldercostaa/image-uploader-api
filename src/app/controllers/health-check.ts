@@ -30,7 +30,7 @@ export const healthCheckController: FastifyPluginAsyncZod = async (server) => {
         response: {
           200: z.object({
             status: z.string(),
-            timestamp: z.string().datetime(),
+            timestamp: z.iso.datetime(),
             uptime: z.number(),
             version: z.string(),
             system: z.object({

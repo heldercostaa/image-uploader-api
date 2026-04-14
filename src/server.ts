@@ -13,9 +13,14 @@ import { exportUploadsController } from './app/controllers/export-uploads';
 import { getUploadsController } from './app/controllers/get-uploads';
 import { healthCheckController } from './app/controllers/health-check';
 import { uploadImageController } from './app/controllers/upload-image';
+import { logger } from './infra/logger';
 import { transformSwaggerSchema } from './transform-swagger-schema';
 
 const server = fastify();
+
+server.addHook("preHandler", async (request, reply) => {
+  logger.trace(`[${request.method}] ${request.url}`);
+});
 
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
@@ -57,5 +62,5 @@ server.register(getUploadsController);
 server.register(exportUploadsController);
 
 server.listen({ port: env.PORT, host: '0.0.0.0' }).then(() => {
-  console.log('🚀 Server running!');
+  logger.info('🚀 Server running!')
 });
