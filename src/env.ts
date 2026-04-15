@@ -16,17 +16,12 @@ const envSchema = z.object({
   CLOUDFLARE_PUBLIC_URL: z.url(),
 
   // Logger
-  LOG_LEVEL: z
-      .enum(["silent", "trace", "debug", "info", "warn", "error", "fatal"])
-      .default("info"),
+  LOG_LEVEL: z.enum(['silent', 'trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
 });
 
 const _env = envSchema.safeParse(process.env);
 if (!_env.success) {
-  console.error(
-    '❗ Invalid environment variables: ',
-    _env.error.flatten().fieldErrors
-  );
+  console.error('❗ Invalid environment variables: ', _env.error.flatten().fieldErrors);
   throw new Error('Invalid environment variables');
 }
 

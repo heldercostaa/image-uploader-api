@@ -1,12 +1,12 @@
 import { PassThrough, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
+import { stringify } from 'csv-stringify';
+import { ilike } from 'drizzle-orm';
+import { z } from 'zod';
 import { db, pg } from '@/db';
 import { schema } from '@/db/schemas';
 import { type Either, makeRight } from '@/shared/either';
 import { uploadFile } from '@/storage/upload-file';
-import { stringify } from 'csv-stringify';
-import { ilike } from 'drizzle-orm';
-import { z } from 'zod';
 
 const exportUploadsParams = z.object({
   searchQuery: z.string().optional(),
@@ -53,7 +53,7 @@ export async function exportUploadsService(
     cursor,
     new Transform({
       objectMode: true,
-      transform(chunks: unknown[], encoding, callback) {
+      transform(chunks: unknown[], _encoding, callback) {
         for (const chunk of chunks) {
           this.push(chunk);
         }

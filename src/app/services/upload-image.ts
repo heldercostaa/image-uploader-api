@@ -1,9 +1,9 @@
 import { Readable } from 'node:stream';
+import { z } from 'zod';
 import { db } from '@/db';
 import { schema } from '@/db/schemas';
 import { type Either, makeLeft, makeRight } from '@/shared/either';
 import { uploadFile } from '@/storage/upload-file';
-import { z } from 'zod';
 import { InvalidFileFormat } from './errors/invalid-file-format';
 
 const uploadImageParams = z.object({

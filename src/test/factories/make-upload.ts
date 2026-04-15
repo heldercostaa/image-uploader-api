@@ -1,7 +1,7 @@
-import { db } from '@/db';
-import { schema } from '@/db/schemas';
 import { faker } from '@faker-js/faker';
 import type { InferInsertModel } from 'drizzle-orm';
+import { db } from '@/db';
+import { schema } from '@/db/schemas';
 
 export async function makeUploadFactory(
   overrides?: Partial<InferInsertModel<typeof schema.uploads>>

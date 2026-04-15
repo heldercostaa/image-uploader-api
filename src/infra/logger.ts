@@ -1,6 +1,6 @@
-import pino from "pino";
-import { env } from "../env";
-import { trace } from "@opentelemetry/api";
+import { trace } from '@opentelemetry/api';
+import pino from 'pino';
+import { env } from '../env';
 
 const level = env.LOG_LEVEL;
 
@@ -25,14 +25,15 @@ export const logger = pino({
         },
       },
       {
-        target: "pino-pretty",
+        target: 'pino-pretty',
         level,
         options: {
           levelFirst: true,
           colorize: true,
           include: 'level,time',
-          translateTime: 'yyyy-mm-dd HH:MM:ss Z'
+          translateTime: 'yyyy-mm-dd HH:MM:ss Z',
         },
       },
-  ]},
+    ],
+  },
 });

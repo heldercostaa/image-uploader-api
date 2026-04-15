@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
+import { describe, expect, it, vi } from 'vitest';
 import { isRight, unwrapEither } from '@/shared/either';
 import * as upload from '@/storage/upload-file';
 import { makeUploadFactory } from '@/test/factories/make-upload';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { exportUploadsService } from './export-uploads';
 
 describe('export uploads', () => {

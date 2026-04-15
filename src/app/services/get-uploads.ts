@@ -1,8 +1,8 @@
+import { asc, count, desc, ilike } from 'drizzle-orm';
+import { z } from 'zod';
 import { db } from '@/db';
 import { schema } from '@/db/schemas';
 import { type Either, makeRight } from '@/shared/either';
-import { asc, count, desc, ilike } from 'drizzle-orm';
-import { z } from 'zod';
 
 const getUploadsParams = z.object({
   searchQuery: z.string().optional(),

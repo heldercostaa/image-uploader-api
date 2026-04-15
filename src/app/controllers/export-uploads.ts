@@ -1,6 +1,6 @@
-import { unwrapEither } from '@/shared/either';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+import { unwrapEither } from '@/shared/either';
 import { exportUploadsService } from '../services/export-uploads';
 
 export const exportUploadsController: FastifyPluginAsyncZod = async (server) => {

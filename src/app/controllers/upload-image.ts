@@ -1,6 +1,6 @@
-import { isRight, unwrapEither } from '@/shared/either';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+import { isRight, unwrapEither } from '@/shared/either';
 import { uploadImageService } from '../services/upload-image';
 
 const MAXIMUM_FILE_SIZE_IN_BYTES = 1024 * 1024 * 4;

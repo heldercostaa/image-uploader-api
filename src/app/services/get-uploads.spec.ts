@@ -1,11 +1,8 @@
 import { randomUUID } from 'node:crypto';
-import { db } from '@/db';
-import { schema } from '@/db/schemas';
+import dayjs from 'dayjs';
+import { describe, expect, it } from 'vitest';
 import { isRight, unwrapEither } from '@/shared/either';
 import { makeUploadFactory } from '@/test/factories/make-upload';
-import dayjs from 'dayjs';
-import { eq } from 'drizzle-orm';
-import { describe, expect, it } from 'vitest';
 import { getUploadsService } from './get-uploads';
 
 describe('get uploads', () => {

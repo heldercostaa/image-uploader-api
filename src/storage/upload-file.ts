@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { basename, extname } from 'node:path';
 import { Readable } from 'node:stream';
-import { env } from '@/env';
 import { Upload } from '@aws-sdk/lib-storage';
 import { z } from 'zod';
+import { env } from '@/env';
 import { r2 } from './client';
 
 const uploadFileParams = z.object({

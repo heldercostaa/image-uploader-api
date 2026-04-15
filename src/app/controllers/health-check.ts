@@ -1,6 +1,6 @@
-import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import os from 'node:os';
 import process from 'node:process';
+import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 const MEMORY_DEGRADED_THRESHOLD = 0.95; // 95%

@@ -1,4 +1,3 @@
-import { env } from '@/env';
 import { fastifyCors } from '@fastify/cors';
 import fastifyMultipart from '@fastify/multipart';
 import fastifySwagger from '@fastify/swagger';
@@ -9,6 +8,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod';
+import { env } from '@/env';
 import { exportUploadsController } from './app/controllers/export-uploads';
 import { getUploadsController } from './app/controllers/get-uploads';
 import { healthCheckController } from './app/controllers/health-check';
@@ -18,7 +18,7 @@ import { transformSwaggerSchema } from './transform-swagger-schema';
 
 const server = fastify();
 
-server.addHook("preHandler", async (request, reply) => {
+server.addHook('preHandler', async (request, _reply) => {
   logger.trace(`[${request.method}] ${request.url}`);
 });
 
@@ -33,10 +33,19 @@ server.setErrorHandler((error, request, reply) => {
     });
   }
 
-  // TODO: Send error to Sentry or other error tracking service
-  console.error(error);
+  logger.error(
+    {
+      err: error,
+      method: request.method,
+      url: request.url,
+      params: request.params,
+      query: request.query,
+      requestId: request.id,
+    },
+    'Internal server error'
+  );
 
-  return reply.status(500).send({ message: 'Internal server error.' });
+  return reply.status(500).send({ message: 'Internal server error' });
 });
 
 server.register(fastifyCors, { origin: '*' });
@@ -62,5 +71,5 @@ server.register(getUploadsController);
 server.register(exportUploadsController);
 
 server.listen({ port: env.PORT, host: '0.0.0.0' }).then(() => {
-  logger.info('🚀 Server running!')
+  logger.info('🚀 Server running!');
 });
